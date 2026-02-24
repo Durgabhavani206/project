@@ -1,0 +1,58 @@
+.dashboard-container {
+  min-height: 100vh;
+  padding: 40px;
+  background: linear-gradient(135deg, #C8A2E8, #D8BFD8);
+  font-family: sans-serif;
+}
+
+.assignment-card {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+textarea, input, select {
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #C8A2E8;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #B57EDC;
+}
+
+.submission-box {
+  background: white;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+/* Logout icon */
+.logout-container {
+  text-align: right;
+}
+
+.logout-icon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.logout-icon:hover {
+  transform: scale(1.1);
+}

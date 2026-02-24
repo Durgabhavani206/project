@@ -1,0 +1,56 @@
+.dashboard-container{
+  min-height:100vh;
+  padding:30px;
+  background:linear-gradient(135deg,#C8A2E8,#D8BFD8);
+  font-family:'Segoe UI',sans-serif;
+}
+
+.dashboard-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:white;
+  margin-bottom:25px;
+}
+
+.assignment-card{
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+  box-shadow:0 8px 25px rgba(0,0,0,0.15);
+}
+
+button{
+  background:#C8A2E8;
+  color:white;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+button:hover{
+  background:#B57EDC;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+.timer{
+  position:fixed;
+  top:20px;
+  right:30px;
+  background:black;
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  font-size:18px;
+  font-weight:bold;
+}

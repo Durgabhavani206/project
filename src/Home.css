@@ -1,0 +1,78 @@
+/* Page Background */
+.home-container {
+  text-align: center;
+  padding: 60px 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #C8A2E8, #D8BFD8);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Headings */
+.hero-section h1 {
+  font-size: 42px;
+  color: #4B2E83; /* deep lilac */
+}
+
+.hero-section h2 {
+  margin-top: 10px;
+  color: #3a2c4f;
+}
+
+/* Text */
+.quote {
+  font-style: italic;
+  margin: 20px 0;
+  color: #4a3f5c;
+}
+
+.description {
+  max-width: 600px;
+  margin: 0 auto;
+  color: #5c4d73;
+}
+
+/* Button */
+.home-buttons {
+  margin-top: 30px;
+}
+
+.primary-btn {
+  padding: 10px 25px;
+  background: #C8A2E8;  /* lilac */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.primary-btn:hover {
+  background-color: #B57EDC; /* darker lilac */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Info Section */
+.info-section {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 60px;
+  flex-wrap: wrap;
+}
+
+/* Cards - NOT WHITE anymore */
+.info-card {
+  background: rgba(255, 255, 255, 0.6); /* soft translucent */
+  backdrop-filter: blur(8px);
+  padding: 20px;
+  width: 250px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(200, 162, 232, 0.3);
+  transition: 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(200, 162, 232, 0.4);
+}
