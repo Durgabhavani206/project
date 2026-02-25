@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Assignment.css";
 
 export default function StudentDashboard() {
   const [assignments, setAssignments] = useState([]);
-  const [content, setContent] = useState("");
-  const [redirectToLogin, setRedirectToLogin] = useState(false);
-
-  const currentUser =
-    JSON.parse(localStorage.getItem("currentUser")) || {};
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("currentUser"));
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("assignments")) || [];
@@ -17,59 +14,77 @@ export default function StudentDashboard() {
 
   const logout = () => {
     localStorage.removeItem("currentUser");
-    setRedirectToLogin(true);
+    navigate("/login");
   };
 
-  const submitAssignment = (assignmentId, assignment) => {
-    if (!content) {
-      alert("Write something before submitting");
-      return;
-    }
+  /* ================= DATE FORMAT FUNCTION ================= */
 
-    let grade = "";
-    if (assignment.type === "MCQ") {
-      grade = content === assignment.questions[0].correctAnswer ? "100" : "0";
-    }
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "-";
 
-    const updated = assignments.map((a) => {
-      if (a.id === assignmentId) {
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString;
+
+    return date.toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true
+    });
+  };
+
+  /* ================= PERFORMANCE ANALYTICS ================= */
+
+  const mySubmissions = assignments.flatMap(a =>
+    a.submissions.filter(s => s.studentName === user.name)
+  );
+
+  const grades = mySubmissions
+    .map(s => Number(s.grade))
+    .filter(g => !isNaN(g));
+
+  const average =
+    grades.length > 0
+      ? (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2)
+      : 0;
+
+  const highest = grades.length > 0 ? Math.max(...grades) : 0;
+  const lowest = grades.length > 0 ? Math.min(...grades) : 0;
+
+  /* ================= DEADLINE REMINDER SYSTEM ================= */
+
+  const now = new Date().getTime();
+
+  const upcomingDeadlines = assignments
+    .map(a => {
+      const submission = a.submissions.find(
+        s => s.studentName === user.name
+      );
+
+      if (submission) return null;
+
+      const deadlineTime = new Date(a.deadline).getTime();
+      const hoursLeft = (deadlineTime - now) / (1000 * 60 * 60);
+
+      if (hoursLeft > 0 && hoursLeft <= 24) {
         return {
           ...a,
-          submissions: [
-            ...a.submissions,
-            {
-              id: Date.now(),
-              student: currentUser.name,
-              content,
-              grade,
-              feedback: "",
-            },
-          ],
+          hoursLeft: hoursLeft
         };
       }
-      return a;
-    });
 
-    setAssignments(updated);
-    localStorage.setItem("assignments", JSON.stringify(updated));
-    setContent("");
-  };
+      return null;
+    })
+    .filter(Boolean);
 
-  if (redirectToLogin) {
-    return <Navigate to="/login" />;
-  }
-
-  const pending = assignments.filter(
-    (a) =>
-      !a.submissions.some((s) => s.student === currentUser.name)
-  );
-
-  const completed = assignments.filter((a) =>
-    a.submissions.some((s) => s.student === currentUser.name)
-  );
+  /* ================= UI ================= */
 
   return (
     <div className="dashboard-container">
+
+      {/* Logout */}
       <div className="logout-container">
         <img
           src="logout.png"
@@ -81,68 +96,136 @@ export default function StudentDashboard() {
 
       <h1>🎓 Student Dashboard</h1>
 
-      <h2>Pending Assignments</h2>
-      {pending.map((a) => (
-        <div key={a.id} className="assignment-card">
-          <h3>{a.title}</h3>
-          <p><strong>Type:</strong> {a.type}</p>
-          <p><strong>Deadline:</strong> {a.deadline}</p>
+      {/* 🔔 DEADLINE ALERT */}
+      {upcomingDeadlines.length > 0 && (
+        <div
+          style={{
+            background: "#fff3cd",
+            padding: "15px",
+            borderRadius: "10px",
+            marginBottom: "20px",
+            border: "1px solid #ffeeba"
+          }}
+        >
+          <strong>⚠ Upcoming Deadlines</strong>
 
-          {a.type === "Text" && (
-            <textarea
-              placeholder="Write your answer..."
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          )}
-
-          {a.type === "File" && (
-            <input
-              type="text"
-              placeholder="Enter file name (demo)"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          )}
-
-          {a.type === "MCQ" &&
-            a.questions.map((q, i) => (
-              <div key={i}>
-                <p>{q.question}</p>
-                {q.options.map((opt, index) => (
-                  <label key={index}>
-                    <input
-                      type="radio"
-                      name={`q${i}`}
-                      value={opt}
-                      onChange={(e) => setContent(e.target.value)}
-                    />
-                    {opt}
-                  </label>
-                ))}
-              </div>
-            ))}
-
-          <button onClick={() => submitAssignment(a.id, a)}>
-            Submit
-          </button>
+          {upcomingDeadlines.map(a => (
+            <p
+              key={a.id}
+              style={{
+                color: a.hoursLeft <= 3 ? "red" : "black",
+                fontWeight: a.hoursLeft <= 3 ? "bold" : "normal"
+              }}
+            >
+              "{a.title}" due on {formatDateTime(a.deadline)} 
+              ({Math.floor(a.hoursLeft)} hrs left)
+            </p>
+          ))}
         </div>
-      ))}
+      )}
 
-      <h2>Completed Assignments</h2>
-      {completed.map((a) => (
-        <div key={a.id} className="assignment-card">
-          <h3>{a.title}</h3>
-          {a.submissions
-            .filter((s) => s.student === currentUser.name)
-            .map((s) => (
-              <div key={s.id}>
-                <p><strong>Grade:</strong> {s.grade || "Pending"}</p>
-                <p><strong>Feedback:</strong> {s.feedback || "None"}</p>
-              </div>
-            ))}
+      {/* Profile */}
+      <div className="assignment-card profile-box">
+        <img src="profile.png" alt="Profile" width="80" />
+        <div>
+          <p><strong>Name:</strong> {user.name}</p>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Role:</strong> {user.role}</p>
         </div>
-      ))}
+      </div>
+
+      {/* Analytics */}
+      <div className="assignment-card">
+        <h3>Performance Analytics</h3>
+        <p>Total Attempts: {grades.length}</p>
+        <p>Average Score: {average}</p>
+        <p>Highest Score: {highest}</p>
+        <p>Lowest Score: {lowest}</p>
+      </div>
+
+      {/* Assignments Table */}
+      <div className="assignment-card">
+        <h2>Assignments</h2>
+
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Grade</th>
+              <th>Submitted At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {assignments.map(a => {
+              const submission = a.submissions.find(
+                s => s.studentName === user.name
+              );
+
+              const status = submission
+                ? submission.grade !== "" && submission.grade != null
+                  ? "Graded"
+                  : "Submitted"
+                : "Pending";
+
+              const urgent = upcomingDeadlines.find(d => d.id === a.id);
+
+              return (
+                <tr
+                  key={a.id}
+                  style={{
+                    background:
+                      urgent && urgent.hoursLeft <= 3
+                        ? "#ffe6e6"
+                        : "transparent"
+                  }}
+                >
+                  <td>{a.title}</td>
+                  <td>{a.type}</td>
+
+                  <td>{formatDateTime(a.deadline)}</td>
+
+                  <td>
+                    <span className={`status-badge status-${status.toLowerCase()}`}>
+                      {status}
+                    </span>
+                  </td>
+
+                  <td>
+                    {submission && submission.grade !== "" && submission.grade != null
+                      ? submission.grade
+                      : "-"}
+                  </td>
+
+                  <td>
+                    {submission
+                      ? formatDateTime(submission.submittedAt)
+                      : "-"}
+                  </td>
+
+                  <td>
+                    <button
+                      onClick={() =>
+                        submission
+                          ? navigate(`/review/${a.id}`)
+                          : navigate(`/attempt/${a.id}`)
+                      }
+                    >
+                      {submission ? "View" : "Start"}
+                    </button>
+                  </td>
+
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
     </div>
   );
 }

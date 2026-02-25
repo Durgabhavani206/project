@@ -39,3 +39,12 @@ input, select {
 .login-box button:hover {
   background: #B57EDC;
 }
+.error-box {
+  background: #f8d7da;
+  color: #842029;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1px solid #f5c2c7;
+}
