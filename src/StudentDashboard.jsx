@@ -72,7 +72,7 @@ export default function StudentDashboard() {
     <div className="dashboard-container">
       <div className="logout-container">
         <img
-          src="/logout.png"
+          src="logout.png"
           alt="Logout"
           className="logout-icon"
           onClick={logout}

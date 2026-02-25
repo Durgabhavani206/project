@@ -7,7 +7,7 @@ export default function Home() {
     <div className="home-container">
       <div className="hero-section">
         {/* Use logo from public folder */}
-        <img src="/KLLOGO.png" alt="KL Logo" className="header-logo" />
+        <img src="KLLOGO.png" alt="KL Logo" className="header-logo" />
 
         <h2>Streamline Your Academic Journey</h2>
 

@@ -86,7 +86,7 @@ export default function TeacherDashboard() {
       {/* Logout Button with Icon */}
       <div className="logout-container">
         <img
-          src="/logout.png"
+          src="logout.png"
           alt="Logout"
           className="logout-icon"
           onClick={logout}
