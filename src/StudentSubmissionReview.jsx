@@ -83,12 +83,18 @@ export default function StudentSubmissionReview() {
           </p>
         )}
 
-        {assignment.type === "MCQ" &&
-          JSON.parse(submission.answers).map((ans, i) => (
-            <p key={i}>
-              Q{i + 1}: {ans}
-            </p>
-          ))}
+        {assignment.type === "MCQ" && (
+  <>
+    {(Array.isArray(submission.answers)
+      ? submission.answers
+      : JSON.parse(submission.answers)
+    ).map((ans, i) => (
+      <p key={i}>
+        <strong>Q{i + 1}:</strong> {ans}
+      </p>
+    ))}
+  </>
+)}
 
         {assignment.type === "FILE" && (
           <button
