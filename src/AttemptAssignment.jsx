@@ -189,7 +189,7 @@ export default function AttemptAssignment() {
       id: Date.now(),
       studentName: user.name,
       answers: finalAnswer,
-      submittedAt: new Date().toLocaleString(),
+     submittedAt: new Date().toISOString(),
       grade,
       remarks: ""
     };
