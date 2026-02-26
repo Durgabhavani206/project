@@ -36,6 +36,51 @@ export default function StudentSubmissionReview() {
     });
   };
 
+  /* ================= DELETE SUBMISSION ================= */
+  const handleDelete = () => {
+    const updatedAssignments = assignments.map(a => {
+      if (a.id === assignment.id) {
+        return {
+          ...a,
+          submissions: a.submissions.filter(
+            s => s.studentName !== user.name
+          )
+        };
+      }
+      return a;
+    });
+
+    localStorage.setItem(
+      "assignments",
+      JSON.stringify(updatedAssignments)
+    );
+
+    alert("Submission Deleted");
+    navigate("/student");
+  };
+
+  /* ================= EDIT SUBMISSION ================= */
+  const handleEdit = () => {
+    const updatedAssignments = assignments.map(a => {
+      if (a.id === assignment.id) {
+        return {
+          ...a,
+          submissions: a.submissions.filter(
+            s => s.studentName !== user.name
+          )
+        };
+      }
+      return a;
+    });
+
+    localStorage.setItem(
+      "assignments",
+      JSON.stringify(updatedAssignments)
+    );
+
+    navigate(`/attempt/${assignment.id}`);
+  };
+
   return (
     <div className="dashboard-container">
 
@@ -84,17 +129,17 @@ export default function StudentSubmissionReview() {
         )}
 
         {assignment.type === "MCQ" && (
-  <>
-    {(Array.isArray(submission.answers)
-      ? submission.answers
-      : JSON.parse(submission.answers)
-    ).map((ans, i) => (
-      <p key={i}>
-        <strong>Q{i + 1}:</strong> {ans}
-      </p>
-    ))}
-  </>
-)}
+          <>
+            {(Array.isArray(submission.answers)
+              ? submission.answers
+              : JSON.parse(submission.answers)
+            ).map((ans, i) => (
+              <p key={i}>
+                <strong>Q{i + 1}:</strong> {ans}
+              </p>
+            ))}
+          </>
+        )}
 
         {assignment.type === "FILE" && (
           <button
@@ -126,10 +171,43 @@ export default function StudentSubmissionReview() {
 
               window.open(fileURL, "_blank");
             }}
+            style={{ marginTop: "15px" }}
           >
             View Submitted File
           </button>
         )}
+
+        {/* EDIT & DELETE ONLY FOR TEXT AND FILE AND ONLY IF NOT GRADED */}
+        {assignment.type !== "MCQ" &&
+          (submission.grade === "" ||
+            submission.grade == null) && (
+          <div style={{ marginTop: "20px" }}>
+            <button
+              onClick={handleEdit}
+              style={{
+                background: "#6a1b9a",
+                borderRadius: "8px",
+                padding: "8px 16px",
+                marginRight: "10px"
+              }}
+            >
+              ✏ Edit Submission
+            </button>
+
+            <button
+              onClick={handleDelete}
+              style={{
+                background: "red",
+                color: "white",
+                borderRadius: "8px",
+                padding: "8px 16px"
+              }}
+            >
+              🗑 Delete Submission
+            </button>
+          </div>
+        )}
+
       </div>
     </div>
   );
